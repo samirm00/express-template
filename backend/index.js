@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 
 import userRoutes from './routes/user.js';
-import recipeRoutes from './routes/recipe.js';
+import flightRoutes from './routes/flight.js';
 import logger from './middleware/logger.js';
 
 dotenv.config();
@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(userRoutes);
-app.use(recipeRoutes);
+app.use(flightRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
