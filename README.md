@@ -149,15 +149,17 @@ Utility functions are located in the `utils` directory for various tasks.
 Example `validatePassword.js` using `export`:
 
 ```javascript
-export const validatePassword = (password) => {
+const validatePassword = (password) => {
   // Validation logic
 };
+
+export default validatePassword;
 ```
 
 To use utility functions in your application:
 
 ```javascript
-import { validatePassword } from './utils/validatePassword.js';
+import  validatePassword  from './utils/validatePassword.js';
 
 const isValid = validatePassword('password123');
 ```
