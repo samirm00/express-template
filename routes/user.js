@@ -2,8 +2,6 @@ import express from 'express';
 
 const router = express.Router();
 
-import userControllers from '../controllers/user.js';
-
-// routes
+// user routes
 
 export default router;
