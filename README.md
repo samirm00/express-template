@@ -200,12 +200,12 @@ Example `user.js`:
 ```javascript
 // user.js
 import express from 'express';
-import { getUser, createUser } from '../controllers/user.js';
+import userControllers from '../controllers/user.js';
 
 const router = express.Router();
 
-router.get('/', getUser);
-router.post('/', createUser);
+router.get('/', userControllers.getUser);
+router.post('/', userControllers.createUser);
 
 export default router;
 ```
