@@ -1,75 +1,133 @@
 # Express Template
 
-Welcome to the Express Template repository, designed to kickstart your Express.js applications with predefined middleware, public assets, routes, utility functions, and a main server file (`index.js`).
+Welcome to the Express Template repository. This template is designed to help you kickstart your Express.js applications with a well-structured project setup, including predefined middleware, public assets, routes, utility functions, and a main server file (`index.js`).
 
 ## Project Structure
 
-```md
+The project is organized as follows:
+
+```plaintext
 express-template/
 │
-├── public/
-│ └── css/
-│ └── styles.css
+├── config/
+│   └── db.js
 │
-├── routes/
-│ └── user.js
-│
-├── utils/
-│ ├── validatePassword.js
-│ ├── validateEmail.js
-│ └── matchPasswords.js
+├── controllers/
+│   └── user.js
 │
 ├── middleware/
-│ └── logger.js
+│   └── logger.js
+│
+├── models/
+│   └── user.js
+│
+├── public/
+│   └── css/
+│       └── styles.css
+│
+├── routes/
+│   └── user.js
+│
+├── utils/
+│   ├── validatePassword.js
+│   ├── validateEmail.js
+│   └── matchPasswords.js
 │
 ├── .babelrc
+├── .env
 ├── .gitignore
+├── .prettierrc.json
+├── index.js
 ├── package.json
 ├── README.md
-└── index.js
 ```
 
 ## Getting Started
 
-To use this template:
+To get started with this template, follow these steps:
 
-1. Use this template to create a new repository.
-
-2. Install dependencies:
+1. **Create a new repository** using this template.
+2. **Install dependencies**:
 
    ```bash
    npm install
    ```
 
-3. Create a `.env` file in the root directory and add your environment variables:
+3. **Set up environment variables**:
+   Create a `.env` file in the root directory and add your environment variables:
 
-   ```bash
+   ```plaintext
    PORT=5002
    ```
 
 ## Scripts
 
-This template includes the following npm scripts in `package.json`:
+This template includes the following npm scripts defined in `package.json`:
 
-- `start`: Start the Express server with node.
+- **Start the server**:
 
   ```bash
   npm start
   ```
 
-- `dev`: Start the Express server with Nodemon for automatic reloading during development.
+- **Start the server in development mode** with automatic reloading using Nodemon:
 
   ```bash
   npm run dev
   ```
 
-## Middleware
+## Configuration
 
-Middleware functions, such as logging HTTP requests, are located in the `middleware` directory.
-
-Example `logger.js` using `export`:
+Database connection configurations and other settings can be managed in the `config` directory. Example configuration for the database:
 
 ```javascript
+// db.js
+import mongoose from 'mongoose';
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected');
+  } catch (error) {
+    console.error('MongoDB connection failed', error);
+    process.exit(1);
+  }
+};
+
+export default connectDB;
+```
+
+## Controllers
+
+Controllers handle the logic for different routes. Each controller is placed in the `controllers` directory.
+
+Example `user.js`:
+
+```javascript
+// user.js
+const userControllers = {
+  getUser : (req, res) => {
+  res.send('Get user');
+  },
+  createUser : (req, res) => {
+    res.send('Create user');
+  }
+}
+
+export default userControllers;
+```
+
+## Middleware
+
+Middleware functions are used to process requests. They are located in the `middleware` directory.
+
+Example `logger.js`:
+
+```javascript
+// logger.js
 const logger = (req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
@@ -78,7 +136,7 @@ const logger = (req, res, next) => {
 export default logger;
 ```
 
-To use middleware in your application (`index.js`):
+Usage in `index.js`:
 
 ```javascript
 import express from 'express';
@@ -89,9 +147,30 @@ const app = express();
 app.use(logger);
 ```
 
+## Models
+
+Models define the structure of the data to be stored in the database. They are located in the `models` directory.
+
+Example `user.js`:
+
+```javascript
+// user.js
+import mongoose from 'mongoose';
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  password: String,
+});
+
+const User = mongoose.model('User', userSchema);
+
+export default User;
+```
+
 ## Public Assets
 
-Public assets like CSS files are stored in the `public` directory.
+Static files such as CSS are stored in the `public` directory.
 
 Example `styles.css`:
 
@@ -102,7 +181,7 @@ body {
 }
 ```
 
-To serve static files in your application (`index.js`):
+Serving static files in `index.js`:
 
 ```javascript
 import express from 'express';
@@ -116,22 +195,22 @@ app.use(express.static('public'));
 
 Routes are defined in the `routes` directory.
 
-Example `user.js` using `export`:
+Example `user.js`:
 
 ```javascript
+// user.js
 import express from 'express';
+import { getUser, createUser } from '../controllers/user.js';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  // Handle GET /user route
-  res.send('User route');
-});
+router.get('/', getUser);
+router.post('/', createUser);
 
 export default router;
 ```
 
-To use routes in your application (`index.js`):
+Usage in `index.js`:
 
 ```javascript
 import express from 'express';
@@ -144,22 +223,23 @@ app.use('/user', userRouter);
 
 ## Utility Functions
 
-Utility functions are located in the `utils` directory for various tasks.
+Utility functions are located in the `utils` directory.
 
-Example `validatePassword.js` using `export`:
+Example `validatePassword.js`:
 
 ```javascript
+// validatePassword.js
 const validatePassword = (password) => {
-  // Validation logic
+  return password.length >= 8;
 };
 
 export default validatePassword;
 ```
 
-To use utility functions in your application:
+Usage in your application:
 
 ```javascript
-import  validatePassword  from './utils/validatePassword.js';
+import validatePassword from './utils/validatePassword.js';
 
 const isValid = validatePassword('password123');
 ```
@@ -168,18 +248,22 @@ const isValid = validatePassword('password123');
 
 The main server file (`index.js`) initializes the Express application, sets up middleware, routes, and starts the server.
 
-Example `index.js` using `import`:
+Example `index.js`:
 
 ```javascript
 import express from 'express';
 import logger from './middleware/logger.js';
 import userRouter from './routes/user.js';
+import connectDB from './config/db.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+connectDB();
+
 app.use(logger);
 app.use(express.static('public'));
+app.use(express.json());
 app.use('/user', userRouter);
 
 app.listen(PORT, () => {
